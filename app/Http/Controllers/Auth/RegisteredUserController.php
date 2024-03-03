@@ -48,6 +48,13 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        // Conditional redirection based on the user's role
+        if ($user->role_id == 2) {
+            return redirect()->route('organizer.profile'); // Assuming you have a route named 'organizer.dashboard'
+        } elseif ($user->role_id == 3) {
+            return redirect()->route('client.profile'); // Assuming you have a route named 'client.dashboard'
+        }
+
         return redirect(RouteServiceProvider::HOME);
     }
 

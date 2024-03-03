@@ -145,9 +145,7 @@
 
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                    @foreach($users as $user)
-                        <a data-toggle="modal" data-target="#addUserModal-{{ $user->id }}" class="btn btn-sm btn-outline-success">Add</a>
-                    @endforeach
+
                 </div>
 
                 <div class="row">
@@ -167,7 +165,7 @@
                                     </div>
 
                                 </div>
-                                <h4>{{$usercount}}</h4>
+                                <h4></h4>
                             </div>
                         </div>
                     </div>
@@ -250,24 +248,20 @@
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
-                                @foreach($users as $user)
+
                                     <tr>
-                                        <td>{{$user->id}}</td>
-                                        <td>{{$user->name}}</td>
-                                        <td>{{$user->email}}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                         <td>
                                             <div class="d-flex align-items-center gap-2">
-                                                <form action="{{ route('user.destroy', ['user' => $user]) }}" method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <button class="btn btn-danger" type="submit">Delete</button>
-                                                </form>
-                                                <a href="#" class="btn btn-warning" data-toggle="modal" data-target="#editUserModal-{{ $user->id }}">Update</a>
+
+                                                <a href="#" class="btn btn-warning" data-toggle="modal" data-target="#editUserModal-">Update</a>
                                             </div>
                                         </td>
 
                                     </tr>
-                                @endforeach
+
 
 
                             </table>
@@ -312,68 +306,32 @@
 
 </html>
 
-@foreach($users as $user)
-    <div class="modal fade" id="editUserModal-{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="editUserModal" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editProjectModalLabel">Edit User id - {{$user->id}}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="{{ route('user.update', ['user' => $user->id]) }}" method="post">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="projectName">Name : </label>
-                            <input type="text" class="form-control" id="projectName" name="name" value="{{ $user->name }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectDescription">Email : </label>
-                            <input type="email" class="form-control" id="projectDescription" name="email" value="{{ $user->email }}"  required  >
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-@endforeach
 
-@foreach($users as $user)
-    <div class="modal fade" id="editUserModal-{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="addUserModal" aria-hidden="true">
+    <div class="modal fade" id="editUserModal-" tabindex="-1" role="dialog" aria-labelledby="editUserModal" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editProjectModalLabel">Edit User id - {{$user->id}}</h5>
+                    <h5 class="modal-title" id="editProjectModalLabel">Edit User id - </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('user.store', ['user' => $user->id]) }}" method="post">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="projectName">Name : </label>
-                            <input type="text" class="form-control" id="projectName" name="name" value="{{ $user->name }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectDescription">Email : </label>
-                            <input type="email" class="form-control" id="projectDescription" name="email" value="{{ $user->email }}"  required  >
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
+
             </div>
         </div>
     </div>
-@endforeach
+
+
+    <div class="modal fade" id="editUserModal-" tabindex="-1" role="dialog" aria-labelledby="addUserModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProjectModalLabel">Edit User id - </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>

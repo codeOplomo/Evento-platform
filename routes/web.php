@@ -18,8 +18,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::middleware(['auth', 'verified', 'checkrole:2'])->group(function () {
+    Route::get('/organizer-profile', function () {
+        return view('organizer.profile');
+    })->name('organizer.profile');
+});
+
+Route::middleware(['auth', 'verified', 'checkrole:3'])->group(function () {
+    Route::get('/client-profile', function () {
+        return view('client.profile');
+    })->name('client.profile');
+});
+
+
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('admin.adminDashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
