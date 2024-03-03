@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
     ];
 
     /**
@@ -40,6 +41,28 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
+
+
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+    /**
+     * Relation to Event model
+     * Assumes a user can organize multiple events
+     */
+    public function events()
+    {
+        return $this->hasMany(Event::class, 'organizer_id'); // Assurez-vous que 'organizer_id' est le nom de la clé étrangère dans la table des événements
+    }
+
+    public function bookedEvents()
+    {
+        return $this->belongsToMany(Event::class, 'bookings');
+    }
+
+
+
 }
