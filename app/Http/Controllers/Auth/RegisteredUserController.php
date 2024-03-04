@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -32,30 +33,43 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'], // Make sure to specify the table name correctly
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:2,3'], // Validate role is either 2 (Organiser) or 3 (Client)
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'in:2,3'], // Specify the role IDs directly
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => $request->role, // Assign role_id based on the selected role
-        ]);
 
-        event(new Registered($user));
+        DB::beginTransaction();
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        Auth::login($user);
+            // Attach roles to the user
+            $user->roles()->attach($request->role);
 
-        // Conditional redirection based on the user's role
-        if ($user->role_id == 2) {
-            return redirect()->route('organizer.profile'); // Assuming you have a route named 'organizer.dashboard'
-        } elseif ($user->role_id == 3) {
-            return redirect()->route('client.profile'); // Assuming you have a route named 'client.dashboard'
+            event(new Registered($user));
+
+            Auth::login($user);
+
+            DB::commit();
+
+            // Redirect based on roles
+            if ($user->hasRole('organiser')) { // Assuming you have a method to check user roles
+                return redirect()->route('organizer.profile');
+            } elseif ($user->hasRole('client')) {
+                return redirect()->route('client.profile');
+            } elseif ($user->hasRole('admin')) {
+                return redirect()->route('dashboard');
+            }
+
+            return redirect(RouteServiceProvider::HOME);
+        } catch (\Exception $exception) {
+            DB::rollback();
+            return redirect()->back()->withErrors(['error' => 'An error occurred during registration. Please try again.']);
         }
-
-        return redirect(RouteServiceProvider::HOME);
     }
 
 }

@@ -16,10 +16,12 @@ class BookingFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+    public function definition()
     {
         return [
-            'user_id' => User::factory(),
+            'user_id' => User::whereHas('roles', function ($query) {
+                    $query->where('name', 'client');
+                })->inRandomOrder()->first()->id ?? User::factory(),
             'event_id' => Event::factory(),
             'status' => $this->faker->randomElement(['confirmed', 'pending', 'cancelled']),
             'number_of_tickets' => $this->faker->numberBetween(1, 5),

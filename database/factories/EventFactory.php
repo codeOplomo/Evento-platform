@@ -18,13 +18,19 @@ class EventFactory extends Factory
      */
     public function definition()
     {
+        // Ensure you have a user with the organizer role assigned.
+        // This example assumes you have a method to retrieve such users.
+        $organizer = User::whereHas('roles', function ($query) {
+            $query->where('name', 'organizer');
+        })->inRandomOrder()->first();
+
         return [
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
             'event_date' => $this->faker->dateTimeBetween('+1 week', '+1 month'),
-            'location' => $this->faker->address,
-            'category_id' => Category::factory(), // Creates a Category for each Event
-            'organizer_id' => User::factory(), // Assumes Organizer is a User, creates a User for each Event
+            'location' => $this->faker->city,
+            'category_id' => Category::factory(), // This line remains unchanged
+            'organizer_id' => $organizer ? $organizer->id : User::factory(), // Pick a random organizer or create a new user
         ];
     }
 

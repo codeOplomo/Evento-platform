@@ -14,6 +14,11 @@ class Event extends Model
         'title', 'description', 'event_date', 'location', 'category_id', 'organizer_id',
     ];
 
+
+    protected $casts = [
+        'event_date' => 'datetime',
+    ];
+
     // Relation avec l'organisateur (un utilisateur)
     public function organizer()
     {

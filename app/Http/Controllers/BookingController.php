@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -12,54 +14,39 @@ class BookingController extends Controller
      */
     public function index()
     {
-        //
+        $bookings = Booking::with(['user', 'event'])->paginate(10);
+        return view('admin.bookings.index', compact('bookings'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $events = Event::all();
+        $users = User::all();
+        return view('admin.bookings.create', compact('events', 'users'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        Booking::create($request->all());
+        return redirect()->route('admin.bookings.index')->with('success', 'Booking created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Booking $booking)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Booking $booking)
     {
-        //
+        $events = Event::all();
+        $users = User::all();
+        return view('admin.bookings.edit', compact('booking', 'events', 'users'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Booking $booking)
     {
-        //
+        $booking->update($request->all());
+        return redirect()->route('admin.bookings.index')->with('success', 'Booking updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Booking $booking)
     {
-        //
+        $booking->delete();
+        return redirect()->route('admin.bookings.index')->with('success', 'Booking deleted successfully.');
     }
 }

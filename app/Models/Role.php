@@ -12,8 +12,9 @@ class Role extends Model
     protected $fillable = ['name'];
 
     // Assuming you might want to retrieve all users associated with a role
+
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 
@@ -12,54 +13,51 @@ class TicketController extends Controller
      */
     public function index()
     {
-        //
+        $tickets = Ticket::paginate(10);
+        return view('admin.tickets.index', compact('tickets'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $bookings = Booking::all(); // Assuming you want to select from existing bookings
+        return view('admin.tickets.create', compact('bookings'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+            'code' => 'required|unique:tickets,code',
+            'status' => 'required',
+            'expiration_date' => 'required|date',
+        ]);
+
+        $ticket = Ticket::create($validated);
+        return redirect()->route('admin.tickets.index')->with('success', 'Ticket created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Ticket $ticket)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Ticket $ticket)
     {
-        //
+        $bookings = Booking::all();
+        return view('admin.tickets.edit', compact('ticket', 'bookings'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Ticket $ticket)
     {
-        //
+        $validated = $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+            'code' => 'required|unique:tickets,code,' . $ticket->id,
+            'status' => 'required',
+            'expiration_date' => 'required|date',
+        ]);
+
+        $ticket->update($validated);
+        return redirect()->route('admin.tickets.index')->with('success', 'Ticket updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Ticket $ticket)
     {
-        //
+        $ticket->delete();
+        return back()->with('success', 'Ticket deleted successfully.');
     }
 }

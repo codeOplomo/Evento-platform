@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+
 
 class Category extends Model
 {
@@ -19,4 +21,18 @@ class Category extends Model
     {
         return $this->hasMany(Event::class);
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Generate slug before saving the category
+        static::saving(function ($category) {
+            $slug = Str::slug($category->name);
+            $count = static::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
+            $category->slug = $count ? "{$slug}-{$count}" : $slug;
+        });
+
+    }
+
 }

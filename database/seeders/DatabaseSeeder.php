@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
+            UserSeeder::class, // Must be before EventSeeder
             CategorySeeder::class,
-            UserSeeder::class,
-            EventSeeder::class,
+            EventSeeder::class, // Requires organizers to exist
             BookingSeeder::class,
             TicketSeeder::class,
         ]);

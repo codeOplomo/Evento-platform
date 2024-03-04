@@ -15,13 +15,13 @@ class TicketFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+    public function definition()
     {
         return [
             'booking_id' => Booking::factory(),
-            'code' => $this->faker->uuid,
+            'code' => $this->faker->unique()->bothify('Ticket-####-????'),
             'status' => $this->faker->randomElement(['valid', 'used', 'expired']),
-            'expiration_date' => $this->faker->dateTimeBetween('+1 month', '+2 months'),
+            'expiration_date' => $this->faker->dateTimeBetween('+1 month', '+6 months'),
         ];
     }
 

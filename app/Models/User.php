@@ -21,7 +21,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id',
     ];
 
     /**
@@ -44,11 +43,23 @@ class User extends Authenticatable
     ];
 
 
-
-    public function role()
+    /**
+     * Determine if the user has the given role.
+     *
+     * @param string $roleName
+     * @return bool
+     */
+    public function hasRole($roleName): bool
     {
-        return $this->belongsTo(Role::class);
+        return $this->roles->contains('name', $roleName);
     }
+
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
     /**
      * Relation to Event model
      * Assumes a user can organize multiple events
