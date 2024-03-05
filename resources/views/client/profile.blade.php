@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,8 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-@include('layouts.userNav') <!-- Assuming you have a navigation layout -->
-
+<x-app-layout>
 <div class="container py-5">
     <div class="row">
         <!-- Client Information Section -->
@@ -57,5 +59,6 @@
     </div>
 </div>
 
+</x-app-layout>
 </body>
 </html>

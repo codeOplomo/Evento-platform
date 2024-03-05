@@ -8,6 +8,7 @@ use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
+use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,7 +28,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified', 'checkrole:admin'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('admin.adminDashboard');
+        $notApprovedEvents = Event::where('is_approved', false)->get();
+        return view('admin.adminDashboard', ['notApprovedEvents' => $notApprovedEvents]);
     })->name('dashboard');
     Route::get('/dashboard/admin/users', function () {
         return view('admin.users.index');
@@ -49,6 +51,9 @@ Route::middleware(['auth', 'verified', 'checkrole:admin'])->group(function () {
     Route::resource('/dashboard/admin/bookings', BookingController::class)->names('admin.bookings');
     Route::resource('/dashboard/admin/tickets', TicketController::class)->names('admin.tickets');
     Route::resource('/dashboard/admin/users', UserController::class)->names('admin.users');
+    Route::put('/dashboard/admin/events/{event}/approve', [EventController::class, 'approve'])->name('admin.events.approve');
+    Route::put('/dashboard/admin/events/{event}/reject', [EventController::class, 'reject'])->name('admin.events.reject');
+
 
 });
 
@@ -60,6 +65,11 @@ Route::middleware(['auth', 'verified', 'checkrole:organiser'])->group(function (
 
 Route::middleware(['auth', 'verified', 'checkrole:client'])->group(function () {
     Route::get('/client-profile', [ClientController::class, 'profile'])->name('client.profile');
+    Route::get('/client/events', [ClientController::class, 'listEvents'])->name('client.events.index');
+    Route::get('/client/events/{event}', [ClientController::class, 'showEvent'])->name('client.events.show');
+
+    Route::get('/client/events/{event}/book', [ClientController::class, 'createBooking'])->name('client.bookings.create');
+    Route::post('/client/events/{event}/book', [ClientController::class, 'storeBooking'])->name('client.bookings.store');
 });
 
 

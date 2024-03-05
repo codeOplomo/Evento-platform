@@ -47,7 +47,7 @@
 </head>
 
 <body>
-@include('layouts.userNav')
+<x-app-layout>
 
     <div class="container py-5">
         <div class="row">
@@ -150,7 +150,7 @@
             </div>
         </div>
     </div>
-
+</x-app-layout>
 </body>
 
 </html>

@@ -1,27 +1,35 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="fw-bold text-dark mb-3">
             {{ __('Profile') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <!-- Update Profile Information Card -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Update Profile Information</h5>
+                        @include('profile.partials.update-profile-information-form')
+                    </div>
                 </div>
-            </div>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
+                <!-- Update Password Card -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Update Password</h5>
+                        @include('profile.partials.update-password-form')
+                    </div>
                 </div>
-            </div>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
+                <!-- Delete User Form Card -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Delete Account</h5>
+                        @include('profile.partials.delete-user-form')
+                    </div>
                 </div>
             </div>
         </div>

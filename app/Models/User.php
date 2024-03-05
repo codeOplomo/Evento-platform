@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_banned',
     ];
 
     /**
@@ -78,6 +79,12 @@ class User extends Authenticatable
     public function bookings()
     {
         return $this->hasMany(Booking::class);
+    }
+
+
+    public function isClient()
+    {
+        return $this->roles->contains('name', 'client');
     }
 
 

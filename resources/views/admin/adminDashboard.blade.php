@@ -96,46 +96,47 @@
 
 
         <div class="row">
-
-            <div class="row container-fluid">
-
-                <div class="custom-table container-fluid">
-                    <table class="table">
-                        <thead>
+            <div class="custom-table container-fluid">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Event Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($notApprovedEvents as $event)
                         <tr>
-                            <th>avatar</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{{ $event->title }}</td>
+                            <td>{{ $event->description }}</td>
+                            <td>{{ $event->category->name ?? 'No Category' }}</td>
+                            <td>{{ $event->event_date->format('F d, Y') }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-
-                                    <a href="#" class="btn btn-warning" data-toggle="modal" data-target="#editUserModal-">Update</a>
+                                    <!-- Approve Event -->
+                                    <form action="{{ route('admin.events.approve', $event->id) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="btn btn-success">Approve</button>
+                                    </form>
+                                    <!-- Reject Event -->
+                                    <form action="{{ route('admin.events.reject', $event->id) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="btn btn-danger">Reject</button>
+                                    </form>
                                 </div>
                             </td>
-
                         </tr>
-
-
-
-                    </table>
-
-                </div>
-                {{--                        {{$user->links()}}--}}
-
-
-
+                    @endforeach
+                    </tbody>
+                </table>
             </div>
-
         </div>
-        <!-- /.container-fluid -->
+
 
     </div>
 @endsection

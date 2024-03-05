@@ -16,7 +16,10 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->dateTime('event_date');
+            $table->dateTime('end_date')->nullable();
             $table->string('location');
+            $table->unsignedInteger('capacity')->nullable();
+            $table->boolean('is_approved')->default(false);
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('organizer_id')->constrained('users')->onDelete('cascade'); // Assurez-vous que cela correspond à votre structure de base de données
             $table->timestamps();

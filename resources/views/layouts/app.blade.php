@@ -18,8 +18,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased">
-<div class="min-vh-100 bg-light text-dark">
+<div class="min-vh-100 text-dark" style="background-color: #1c606a">
     @include('layouts.navigation')
+
+
 
     <!-- Page Heading -->
     @if (isset($header))

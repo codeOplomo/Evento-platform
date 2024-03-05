@@ -11,12 +11,14 @@ class Event extends Model
 
     // Définir les attributs qui peuvent être assignés en masse
     protected $fillable = [
-        'title', 'description', 'event_date', 'location', 'category_id', 'organizer_id',
+        'title', 'description', 'event_date', 'end_date', 'location', 'capacity', 'is_approved', 'category_id', 'organizer_id',
     ];
 
 
     protected $casts = [
         'event_date' => 'datetime',
+        'end_date' => 'datetime',
+        'is_approved' => 'boolean',
     ];
 
     // Relation avec l'organisateur (un utilisateur)

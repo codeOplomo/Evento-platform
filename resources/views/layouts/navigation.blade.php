@@ -14,10 +14,16 @@
         <!-- Primary Navigation Menu -->
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
-                </li>
+                <!-- Dynamic links for authenticated clients -->
+                @auth
+                    @if (auth()->user()->isClient())
+                                <a class="nav-link" href="{{ route('client.profile') }}">My Space</a>
+                                <a class="nav-link" href="{{ route('client.events.index') }}">Events</a>
+                                <a class="nav-link" href="">Institutions</a>
+                    @endif
+                @endauth
             </ul>
+
 
             <!-- Settings Dropdown -->
             <ul class="navbar-nav">

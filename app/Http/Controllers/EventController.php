@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
+
+    public function notApprovedEvents()
+    {
+        $notApprovedEvents = Event::where('is_approved', false)->get();
+
+        return view('admin.adminDashboard', ['notApprovedEvents' => $notApprovedEvents]);
+    }
     /**
      * Display a listing of the resource.
      */
