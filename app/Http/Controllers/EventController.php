@@ -8,6 +8,25 @@ use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
+    public function approve(Event $event)
+    {
+        // Update the event's is_approved field to true
+        $event->update(['is_approved' => true]);
+
+        return redirect()->back()->with('success', 'Event has been approved successfully.');
+    }
+
+    public function reject(Event $event)
+    {
+        // You can perform any additional logic here if needed before rejecting the event
+        // For example, sending notifications to the event organizer or attendees
+
+        // Update the motif column of the event
+        $event->motif = request()->input('motif');
+        $event->save();
+
+        return redirect()->back()->with('success', 'Event has been rejected successfully.');
+    }
 
     public function notApprovedEvents()
     {

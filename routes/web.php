@@ -28,7 +28,10 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified', 'checkrole:admin'])->group(function () {
     Route::get('/dashboard', function () {
-        $notApprovedEvents = Event::where('is_approved', false)->get();
+        $notApprovedEvents = Event::where('is_approved', false)
+            ->where(function($query) {
+                $query->whereNull('motif');
+            })->get();
         return view('admin.adminDashboard', ['notApprovedEvents' => $notApprovedEvents]);
     })->name('dashboard');
     Route::get('/dashboard/admin/users', function () {

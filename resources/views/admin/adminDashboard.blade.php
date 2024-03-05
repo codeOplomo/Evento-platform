@@ -123,11 +123,34 @@
                                         <button type="submit" class="btn btn-success">Approve</button>
                                     </form>
                                     <!-- Reject Event -->
-                                    <form action="{{ route('admin.events.reject', $event->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-danger">Reject</button>
-                                    </form>
+                                    <!-- Reject Event -->
+                                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#rejectModal{{ $event->id }}">Reject</button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="rejectModal{{ $event->id }}" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel{{ $event->id }}" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="rejectModalLabel{{ $event->id }}">Reject Event</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="{{ route('admin.events.reject', $event->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <div class="form-group">
+                                                            <label for="motif">Motif for rejection:</label>
+                                                            <textarea class="form-control" id="motif" name="motif" rows="3"></textarea>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-danger">Reject</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </td>
                         </tr>
