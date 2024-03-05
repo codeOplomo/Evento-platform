@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
@@ -51,15 +53,13 @@ Route::middleware(['auth', 'verified', 'checkrole:admin'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'checkrole:organiser'])->group(function () {
-    Route::get('/organizer-profile', function () {
-        return view('organizer.profile');
-    })->name('organizer.profile');
+    Route::get('/organizer-profile', [OrganizerController::class, 'profile'])->name('organizer.profile');
+    Route::get('/organizer/events/create', [OrganizerController::class, 'createEvent'])->name('organizer.events.create');
+    Route::post('/organizer/events', [OrganizerController::class, 'storeEvent'])->name('organizer.events.store');
 });
 
 Route::middleware(['auth', 'verified', 'checkrole:client'])->group(function () {
-    Route::get('/client-profile', function () {
-        return view('client.profile');
-    })->name('client.profile');
+    Route::get('/client-profile', [ClientController::class, 'profile'])->name('client.profile');
 });
 
 
