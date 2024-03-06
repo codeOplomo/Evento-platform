@@ -13,7 +13,7 @@ class Event extends Model implements HasMedia
 
     // Définir les attributs qui peuvent être assignés en masse
     protected $fillable = [
-        'title', 'description', 'event_date', 'end_date', 'location', 'capacity', 'is_approved', 'category_id', 'organizer_id',
+        'title', 'description', 'event_date', 'end_date', 'location', 'capacity', 'is_approved', 'is_auto', 'category_id', 'organizer_id',
     ];
 
 
@@ -21,6 +21,7 @@ class Event extends Model implements HasMedia
         'event_date' => 'datetime',
         'end_date' => 'datetime',
         'is_approved' => 'boolean',
+        'is_auto' => 'boolean',
     ];
 
     // Relation avec l'organisateur (un utilisateur)

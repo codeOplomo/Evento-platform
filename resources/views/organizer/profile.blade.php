@@ -177,7 +177,7 @@
                 </div>
                 <div class="card my-4">
                     <div class="card-body">
-                        <h4>Your Bookings</h4>
+                        <h4>Incomming Bookings</h4>
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -197,11 +197,19 @@
                                         <td>{{ $booking->status }}</td>
                                         <td>{{ $booking->number_of_tickets }}</td>
                                         <td>
-                                            <!-- You can add action buttons here -->
                                             <a href="#" class="btn btn-sm btn-info">View Details</a>
+                                            <form action="{{ route('organizer.bookings.confirm', $booking->id) }}" method="POST" style="display: inline-block;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                                            </form>
+                                            <form action="{{ route('organizer.bookings.cancel', $booking->id) }}" method="POST" style="display: inline-block;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-warning">Cancel</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach
+
                                 </tbody>
                             </table>
                         </div>

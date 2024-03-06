@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('location');
             $table->unsignedInteger('capacity')->nullable();
             $table->boolean('is_approved')->default(false);
+            $table->boolean('is_auto')->default(true);
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('organizer_id')->constrained('users')->onDelete('cascade'); // Assurez-vous que cela correspond à votre structure de base de données
             $table->timestamps();

@@ -30,16 +30,39 @@ class OrganizerController extends Controller
 
     public function profile()
     {
-        $organiser = Auth::user(); // Get the currently authenticated user
-        $events = $organiser->events; // Assuming you have an 'events' relationship defined in your User model
+        $organiser = Auth::user(); // Get the currently authenticated organizer
 
-        // Fetch bookings for the organizer's events
+        // Fetch only pending bookings for the organizer's events
         $bookings = Booking::with('event', 'user')
-            ->whereIn('event_id', $organiser->events->pluck('id'))
+            ->whereHas('event', function($query) use ($organiser) {
+                $query->where('organizer_id', $organiser->id);
+            })
+            ->where('status', 'pending')
             ->get();
 
-        // Pass the user, their events, and bookings to the view
-        return view('organizer.profile', compact('organiser', 'events', 'bookings'));
+        // Assuming you already have a way to fetch events for the organizer
+        $events = $organiser->events;
+
+        return view('organizer.profile', compact('organiser', 'bookings', 'events'));
+    }
+
+
+    public function confirmBooking(Request $request, $bookingId)
+    {
+        $booking = Booking::findOrFail($bookingId);
+        $booking->status = 'confirmed';
+        $booking->save();
+
+        return back()->with('success', 'Booking confirmed successfully.');
+    }
+
+    public function cancelBooking(Request $request, $bookingId)
+    {
+        $booking = Booking::findOrFail($bookingId);
+        $booking->status = 'cancelled';
+        $booking->save();
+
+        return back()->with('success', 'Booking cancelled successfully.');
     }
 
 
@@ -84,15 +107,20 @@ class OrganizerController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'event_date' => 'required|date',
-            'end_date' => 'nullable|date|after_or_equal:event_date', // Allow nullable, but must be after start date if provided
+            'end_date' => 'nullable|date|after_or_equal:event_date',
             'location' => 'required|string|max:255',
             'category_id' => 'required|integer|exists:categories,id',
             'capacity' => 'required|integer|min:1',
             'event_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        // If the checkbox is unchecked, 'is_auto' won't be present, so set it to true by default
+        $is_auto = $request->has('is_auto') ? false : true;
+
         $event = new Event($validatedData);
         $event->organizer_id = Auth::id();
+        // Set the is_auto attribute based on the checkbox
+        $event->is_auto = $is_auto;
         $event->save();
 
         if ($request->hasFile('event_picture')) {
@@ -101,6 +129,7 @@ class OrganizerController extends Controller
 
         return redirect()->route('organizer.profile')->with('success', 'Event created successfully.');
     }
+
 
     /**
      * Display the specified resource.

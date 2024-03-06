@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container py-5">
+    <div class="container-fluid py-5">
         <h2>Create New Event</h2>
         <form action="{{ route('organizer.events.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -39,6 +39,12 @@
             <div class="mb-3">
                 <label for="event_picture" class="form-label">Event Picture</label>
                 <input type="file" class="form-control" id="event_picture" name="event_picture">
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="1" id="is_auto" name="is_auto">
+                <label class="form-check-label" for="is_auto">
+                    Disable automatic booking
+                </label>
             </div>
             <button type="submit" class="btn btn-success">Create Event</button>
         </form>
