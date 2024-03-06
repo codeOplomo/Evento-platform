@@ -27,9 +27,9 @@ class ClientController extends Controller
     {
         $currentDate = now();
 
-        // Fetch upcoming events
-        // An event is upcoming if the current date is before the event start date OR before the event end date.
+        // Fetch upcoming and approved events
         $upcomingEvents = Event::with('category', 'organizer')
+            ->where('is_approved', true)
             ->where(function ($query) use ($currentDate) {
                 $query->where('event_date', '>', $currentDate)
                     ->orWhere(function ($subQuery) use ($currentDate) {
@@ -41,10 +41,9 @@ class ClientController extends Controller
             ->withQueryString()
             ->appends(['finishedPage' => request()->input('finishedPage')]);
 
-        // Fetch finished (past) events
-        // An event is finished if the end date is not null and is before the current date,
-        // OR if the end date is null but the event date is before the current date.
+        // Fetch finished, approved events
         $finishedEvents = Event::with('category', 'organizer')
+            ->where('is_approved', true)
             ->where(function ($query) use ($currentDate) {
                 $query->whereNotNull('end_date')
                     ->where('end_date', '<=', $currentDate);
@@ -62,6 +61,7 @@ class ClientController extends Controller
 
 
 
+
     public function showEvent($eventId)
     {
         $event = Event::with('category', 'organizer')->findOrFail($eventId);
@@ -71,15 +71,9 @@ class ClientController extends Controller
     }
 
 
-    public function createBooking($eventId)
+    public function createBooking(Request $request, Event $event)
     {
-        $event = Event::findOrFail($eventId);
-        // Assume you have a view named 'client.bookings.create' for the booking form
-        return view('client.bookings.create', compact('event'));
-    }
 
-    public function storeBooking(Request $request, Event $event)
-    {
         $request->validate([
             'number_of_tickets' => 'required|integer|min:1',
             // Add other validation rules as needed
@@ -89,6 +83,7 @@ class ClientController extends Controller
         $totalBooked = $event->bookings()->sum('number_of_tickets');
         if ($totalBooked + $request->number_of_tickets > $event->capacity) {
             // Handle overbooking scenario, e.g., return with an error message
+            dd($totalBooked, $event->capacity, $request->number_of_tickets, $totalBooked + $request->number_of_tickets, $event->capacity - $totalBooked - $request->number_of_tickets);
             return back()->with('error', 'Unable to book the requested number of tickets due to capacity limits.');
         }
 
@@ -97,12 +92,19 @@ class ClientController extends Controller
         $booking->user_id = Auth::id();
         $booking->event_id = $event->id;
         $booking->number_of_tickets = $request->number_of_tickets;
-        $booking->status = 'pending'; // Or any default status you prefer
+        $booking->status = 'pending';
         $booking->save();
 
-        // Redirect to a confirmation page or back to the event details with a success message
-        return redirect()->route('client.events.show', $event->id)->with('success', 'Booking successfully created.');
+        // Redirect back to the event details page with a success message
+        return redirect()->back()->with('success', 'Booking successfully created.');
     }
+
+    public function storeBooking(Request $request, Event $event)
+    {
+
+    }
+
+
 
     /**
      * Display a listing of the resource.
@@ -123,9 +125,8 @@ class ClientController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Event $event)
     {
-        //
     }
 
     /**

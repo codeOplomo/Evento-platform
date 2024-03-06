@@ -18,6 +18,21 @@
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
+                        <!-- Ban/Unban Button -->
+                        @if($user->is_banned)
+                            <form action="{{ route('admin.users.unban', $user->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-sm btn-warning">Unban</button>
+                            </form>
+                        @else
+                            <form action="{{ route('admin.users.ban', $user->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-sm btn-dark">Ban</button>
+                            </form>
+                        @endif
+
                         <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary">Edit</a>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $user->id }}">Delete</button>
@@ -67,7 +82,20 @@
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
-                        <!-- Example actions -->
+                        <!-- Ban/Unban Button -->
+                        @if($user->is_banned)
+                            <form action="{{ route('admin.users.unban', $user->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-sm btn-warning">Unban</button>
+                            </form>
+                        @else
+                            <form action="{{ route('admin.users.ban', $user->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-sm btn-dark">Ban</button>
+                            </form>
+                        @endif
                         <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary">Edit</a>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $user->id }}">Delete</button>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Category;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,20 +34,9 @@ class OrganizerController extends Controller
 
     public function storeEvent(Request $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'event_date' => 'required|date',
-            'location' => 'required|string|max:255',
-            'category_id' => 'required|integer|exists:categories,id',
-        ]);
 
-        $validatedData['organizer_id'] = Auth::id(); // Automatically set organizer_id to the current user
-
-        Event::create($validatedData);
-
-        return redirect()->route('organizer.events.index')->with('success', 'Event created successfully.');
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -60,15 +50,35 @@ class OrganizerController extends Controller
      */
     public function create()
     {
-        //
+        // Assuming you might want to select categories for an event
+        $categories = Category::all();
+
+        // Return the view with necessary data
+        return view('organizer.events.create', compact('categories'));
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'event_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:event_date', // Allow nullable, but must be after start date if provided
+            'location' => 'required|string|max:255',
+            'category_id' => 'required|integer|exists:categories,id',
+            'capacity' => 'required|integer|min:1', // Assuming you want at least one attendee
+        ]);
+
+        $validatedData['organizer_id'] = Auth::id(); // Automatically set organizer_id to the current user
+
+        // Now with end_date and capacity included
+        Event::create($validatedData);
+
+        return redirect()->route('organizer.profile')->with('success', 'Event created successfully.');
     }
 
     /**
@@ -82,24 +92,56 @@ class OrganizerController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $event = Event::findOrFail($id);
+        $categories = Category::all(); // Assuming you use categories
+
+        return view('organizer.events.edit', compact('event', 'categories'));
     }
+
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Event $event)
     {
-        //
+        // Validate the request data
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'event_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:event_date',
+            'location' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id', // Assuming the category_id is submitted in the form
+            'capacity' => 'required|integer|min:1', // Assuming the capacity is submitted in the form
+        ]);
+
+        // Update the event details
+        $event->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'event_date' => $request->event_date,
+            'end_date' => $request->end_date,
+            'location' => $request->location,
+            'category_id' => $request->category_id,
+            'capacity' => $request->capacity,
+        ]);
+
+        // Redirect back with success message
+        return redirect()->route('organizer.events.index')->with('success', 'Event updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $event = Event::findOrFail($id);
+        // Perform any authorization checks here to ensure the user can delete this event
+        $event->delete();
+        return redirect()->route('organizer.profile')->with('success', 'Event deleted successfully.');
     }
+
 }

@@ -71,8 +71,9 @@
                                 <thead>
                                 <tr>
                                     <th>Title</th>
-                                    <th>Date</th>
-                                    <th>Location</th>
+                                    <th>Event Date</th>
+                                    <th>Approved</th>
+                                    <th>Details</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -81,7 +82,48 @@
                                     <tr>
                                         <td>{{ $event->title }}</td>
                                         <td>{{ $event->event_date->format('Y-m-d') }}</td>
-                                        <td>{{ $event->location }}</td>
+                                        <td>
+                                            @if($event->is_approved)
+                                                <span class="text-success">&#10004;</span> <!-- Approved -->
+                                            @elseif($event->motif)
+                                                <span class="text-danger">Rejected: {{ $event->motif }}</span> <!-- Rejected with a reason -->
+                                            @else
+                                                <span class="text-warning">Pending</span> <!-- Neither approved nor rejected -->
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#eventDetailModal-{{ $event->id }}">Details</button>
+                                            <!-- Detail Modal -->
+                                            <div class="modal fade" id="eventDetailModal-{{ $event->id }}" tabindex="-1" aria-labelledby="eventDetailModalLabel-{{ $event->id }}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="eventDetailModalLabel-{{ $event->id }}">{{ $event->title }}</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p><strong>Event Date:</strong> {{ $event->event_date->format('Y-m-d') }}</p>
+                                                            <p><strong>Location:</strong> {{ $event->location }}</p>
+                                                            <p><strong>Approved:</strong>
+                                                                @if($event->is_approved)
+                                                                    <span class="text-success">Yes</span>
+                                                                @else
+                                                                    <span class="text-danger">No</span>
+                                                                @endif
+                                                            </p>
+                                                            @if($event->motif)
+                                                                <p><strong>Motif:</strong> {{ $event->motif }}</p>
+                                                            @endif
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+
+
                                         <td>
                                             <a href="{{ route('organizer.events.edit', $event->id) }}" class="btn btn-sm btn-primary">Edit</a>
                                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEventModal-{{ $event->id }}">Delete</button>
@@ -98,11 +140,12 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                            <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline">
+                                                            <form action="{{ route('organizer.events.destroy', $event->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">Delete</button>
                                                             </form>
+
                                                         </div>
                                                     </div>
                                                 </div>

@@ -56,15 +56,21 @@ Route::middleware(['auth', 'verified', 'checkrole:admin'])->group(function () {
     Route::resource('/dashboard/admin/users', UserController::class)->names('admin.users');
     Route::put('/dashboard/admin/events/{event}/approve', [EventController::class, 'approve'])->name('admin.events.approve');
     Route::put('/dashboard/admin/events/{event}/reject', [EventController::class, 'reject'])->name('admin.events.reject');
-
-
+    Route::patch('/dashboard/admin/users/{user}/ban', [UserController::class, 'ban'])->name('admin.users.ban');
+    Route::patch('/dashboard/admin/users/{user}/unban', [UserController::class, 'unban'])->name('admin.users.unban');
 });
 
 Route::middleware(['auth', 'verified', 'checkrole:organiser'])->group(function () {
+    Route::resource('organizer/events', OrganizerController::class)->except(['show']);
     Route::get('/organizer-profile', [OrganizerController::class, 'profile'])->name('organizer.profile');
-    Route::get('/organizer/events/create', [OrganizerController::class, 'createEvent'])->name('organizer.events.create');
-    Route::post('/organizer/events', [OrganizerController::class, 'storeEvent'])->name('organizer.events.store');
+    Route::get('organizer/events/create', [OrganizerController::class, 'create'])->name('organizer.events.create');
+    Route::get('organizer/events/{event}/edit', [OrganizerController::class, 'edit'])->name('organizer.events.edit');
+    Route::delete('organizer/events/{event}', [OrganizerController::class, 'destroy'])->name('organizer.events.destroy');
+    Route::post('organizer/events', [OrganizerController::class, 'store'])->name('organizer.events.store');
+    Route::put('/organizer/events/{event}', [EventController::class, 'update'])->name('organizer.events.update');
+
 });
+
 
 Route::middleware(['auth', 'verified', 'checkrole:client'])->group(function () {
     Route::get('/client-profile', [ClientController::class, 'profile'])->name('client.profile');

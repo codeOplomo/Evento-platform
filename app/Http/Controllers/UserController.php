@@ -8,6 +8,25 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+
+    // Method to ban a user
+    public function ban($id)
+    {
+        $user = User::findOrFail($id);
+        $user->update(['is_banned' => true]);
+
+        return back()->with('success', 'User banned successfully.');
+    }
+
+// Method to unban a user
+    public function unban($id)
+    {
+        $user = User::findOrFail($id);
+        $user->update(['is_banned' => false]);
+
+        return back()->with('success', 'User unbanned successfully.');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -83,10 +102,36 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'role' => 'required|exists:roles,id',
+        ]);
+
+        // Find the user by ID
+        $user = User::findOrFail($id);
+
+        // Update user details
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        // Sync roles (detach any existing roles and attach the new one)
+        // This assumes that a user can have multiple roles.
+        // If a user can only have a single role, you might instead use `syncWithoutDetaching`
+        // to ensure the user does not get assigned the same role more than once.
+        $user->roles()->sync([$request->role]);
+
+        // Redirect back with a success message
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.
