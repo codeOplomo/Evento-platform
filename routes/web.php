@@ -67,6 +67,7 @@ Route::middleware(['auth', 'verified', 'checkrole:organiser'])->group(function (
     Route::get('organizer/events/{event}/edit', [OrganizerController::class, 'edit'])->name('organizer.events.edit');
     Route::delete('organizer/events/{event}', [OrganizerController::class, 'destroy'])->name('organizer.events.destroy');
     Route::post('organizer/events', [OrganizerController::class, 'store'])->name('organizer.events.store');
+    Route::post('/organizer/update-profile-picture', [OrganizerController::class, 'updateProfilePicture'])->name('organizer.updateProfilePicture');
     Route::put('/organizer/events/{event}', [EventController::class, 'update'])->name('organizer.events.update');
 
 });
@@ -76,6 +77,7 @@ Route::middleware(['auth', 'verified', 'checkrole:client'])->group(function () {
     Route::get('/client-profile', [ClientController::class, 'profile'])->name('client.profile');
     Route::get('/client/events', [ClientController::class, 'listEvents'])->name('client.events.index');
     Route::get('/client/events/{event}', [ClientController::class, 'showEvent'])->name('client.events.show');
+    Route::post('/client/update-profile-picture', [ClientController::class, 'updateProfilePicture'])->name('client.updateProfilePicture');
 
     Route::get('/client/events/{event}/book', [ClientController::class, 'createBooking'])->name('client.bookings.create');
     Route::post('/client/events/{event}/book', [ClientController::class, 'storeBooking'])->name('client.bookings.store');

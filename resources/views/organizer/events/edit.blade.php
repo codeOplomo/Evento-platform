@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="container">
         <h1>Edit Event</h1>
-        <form action="{{ route('organizer.events.update', $event->id) }}" method="POST">
+        <form action="{{ route('organizer.events.update', $event->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -44,6 +44,11 @@
             <div class="mb-3">
                 <label for="capacity" class="form-label">Capacity</label>
                 <input type="number" class="form-control" id="capacity" name="capacity" value="{{ old('capacity', $event->capacity) }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="event_picture" class="form-label">Event Picture</label>
+                <input type="file" class="form-control" id="event_picture" name="event_picture">
             </div>
 
             <button type="submit" class="btn btn-primary">Update Event</button>

@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="container py-5">
         <h2>Create New Event</h2>
-        <form action="{{ route('organizer.events.store') }}" method="POST">
+        <form action="{{ route('organizer.events.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-3">
                 <label for="title" class="form-label">Event Title</label>
@@ -35,6 +35,10 @@
             <div class="mb-3">
                 <label for="capacity" class="form-label">Capacity</label>
                 <input type="number" class="form-control" id="capacity" name="capacity" required>
+            </div>
+            <div class="mb-3">
+                <label for="event_picture" class="form-label">Event Picture</label>
+                <input type="file" class="form-control" id="event_picture" name="event_picture">
             </div>
             <button type="submit" class="btn btn-success">Create Event</button>
         </form>

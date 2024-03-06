@@ -7,6 +7,14 @@
         <form action="{{ route('admin.events.update', $event->id) }}" method="POST">
             @csrf
             @method('PUT')
+            <!-- Display Event Image -->
+            <div class="mt-4 text-center">
+                @if($event->getFirstMediaUrl('event_pictures'))
+                    <img src="{{ $event->getFirstMediaUrl('event_pictures') }}" alt="Event Image" class="img-fluid rounded" style="max-width: 300px; max-height: 300px;">
+                @else
+                    <p>No event image available.</p>
+                @endif
+            </div>
             <div class="form-group">
                 <label for="title">Event Title</label>
                 <input type="text" class="form-control" id="title" name="title" value="{{ $event->title }}" required>

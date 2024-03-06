@@ -5,7 +5,7 @@
             @foreach ($upcomingEvents as $event)
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
-                        <img src="{{ $event->image_url }}" class="card-img-top" alt="Event Image">
+                        <img src="{{ $event->getFirstMediaUrl('event_pictures') }}" class="card-img-top" alt="Event Image">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ $event->title }}</h5>
                             <!-- Display the category as a badge -->
@@ -33,7 +33,7 @@
             @foreach ($finishedEvents as $event)
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
-                        <img src="{{ $event->image_url }}" class="card-img-top" alt="Event Image">
+                        <img src="{{ $event->getFirstMediaUrl('event_pictures') }}" class="card-img-top" alt="Event Image">
                         <div class="card-body">
                             <h5 class="card-title">{{ $event->title }}</h5>
                             <span class="badge" style="background-color: {{ '#' . substr(md5($event->category->name ?? 'default'), 0, 6) }}">{{ $event->category->name ?? 'No Category' }}</span>

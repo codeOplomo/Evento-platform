@@ -11,6 +11,23 @@ use Illuminate\Support\Facades\Auth;
 class ClientController extends Controller
 {
 
+    public function updateProfilePicture(Request $request)
+    {
+        $request->validate([
+            'profile_picture' => 'required|image|max:2048', // 2MB Max
+        ]);
+
+        $client = auth()->user(); // Assuming the authenticated user is the organizer
+
+        // Remove old profile picture if exists
+        $client->clearMediaCollection('profile_pictures');
+
+        // Add new profile picture
+        $client->addMediaFromRequest('profile_picture')->toMediaCollection('profile_pictures');
+
+        return back()->with('success', 'Profile picture updated successfully.');
+    }
+
     public function profile()
     {
         // Retrieve the authenticated client

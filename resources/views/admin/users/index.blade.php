@@ -7,6 +7,7 @@
         <table class="table">
             <thead>
             <tr>
+                <th>Avatar</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Actions</th>
@@ -15,9 +16,16 @@
             <tbody>
             @foreach ($organizers as $user)
                 <tr>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>
+                    <td class="align-middle">
+                        @if($user->getFirstMediaUrl('profile_pictures'))
+                            <img src="{{ $user->getFirstMediaUrl('profile_pictures') }}" alt="Avatar" class="avatar img-thumbnail rounded-circle" style="width: 50px; height: 50px;">
+                        @else
+                            No Avatar
+                        @endif
+                    </td>
+                    <td class="align-middle">{{ $user->name }}</td>
+                    <td class="align-middle">{{ $user->email }}</td>
+                    <td class="align-middle">
                         <!-- Ban/Unban Button -->
                         @if($user->is_banned)
                             <form action="{{ route('admin.users.unban', $user->id) }}" method="POST" style="display:inline;">
@@ -32,7 +40,6 @@
                                 <button type="submit" class="btn btn-sm btn-dark">Ban</button>
                             </form>
                         @endif
-
                         <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary">Edit</a>
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $user->id }}">Delete</button>
@@ -65,12 +72,12 @@
             </tbody>
         </table>
 
-
         <h2>Clients</h2>
         <a href="{{ route('admin.users.create') }}" class="btn btn-success mb-2">Add New Client</a>
         <table class="table">
             <thead>
             <tr>
+                <th>Avatar</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Actions</th>
@@ -79,9 +86,16 @@
             <tbody>
             @foreach ($clients as $user)
                 <tr>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>
+                    <td class="align-middle">
+                        @if($user->getFirstMediaUrl('profile_pictures'))
+                            <img src="{{ $user->getFirstMediaUrl('profile_pictures') }}" alt="Avatar" class="avatar img-thumbnail rounded-circle" style="width: 50px; height: 50px;">
+                        @else
+                            No Avatar
+                        @endif
+                    </td>
+                    <td class="align-middle">{{ $user->name }}</td>
+                    <td class="align-middle">{{ $user->email }}</td>
+                    <td class="align-middle">
                         <!-- Ban/Unban Button -->
                         @if($user->is_banned)
                             <form action="{{ route('admin.users.unban', $user->id) }}" method="POST" style="display:inline;">
@@ -122,7 +136,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </td>
                 </tr>
             @endforeach
@@ -130,4 +143,3 @@
         </table>
     </div>
 @endsection
-

@@ -54,12 +54,27 @@
             <div class="col-lg-4">
                 <div class="card">
                     <div class="card-body text-center">
+
+                        <!-- Profile Picture -->
+                        @if($organiser->getFirstMediaUrl('profile_pictures'))
+                            <img src="{{ $organiser->getFirstMediaUrl('profile_pictures') }}" alt="Profile Picture" class="img-fluid rounded-circle" style="width: 150px; height: 150px;">
+                        @else
+                            <img src="{{ asset('default-profile.png') }}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="width: 150px; height: 150px;">
+                        @endif
                         <h5>{{ $organiser->name }}</h5>
                         <p class="text-muted">{{ $organiser->roles->first()->name ?? 'Role not set' }}</p>
                         <p class="text-muted">{{ $organiser->email }}</p>
-                        <!-- Social links or additional user info can go here -->
+                        <!-- Update Profile Picture Button -->
+                        <button class="btn btn-primary mt-3" onclick="document.getElementById('profilePictureUpload').click()">Update Profile Picture</button>
+
+                        <!-- Hidden Form for Profile Picture Upload -->
+                        <form action="{{ route('organizer.updateProfilePicture') }}" method="POST" enctype="multipart/form-data" style="display: none;">
+                            @csrf
+                            <input type="file" name="profile_picture" id="profilePictureUpload" onchange="this.form.submit()">
+                        </form>
                     </div>
                 </div>
+
             </div>
             <div class="col-lg-8">
                 <div class="card mb-4">
@@ -102,6 +117,7 @@
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
+                                                            <img src="{{ $event->getFirstMediaUrl('event_pictures') }}" class="img-fluid mb-3" alt="Event Image">
                                                             <p><strong>Event Date:</strong> {{ $event->event_date->format('Y-m-d') }}</p>
                                                             <p><strong>Location:</strong> {{ $event->location }}</p>
                                                             <p><strong>Approved:</strong>
@@ -121,6 +137,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                         </td>
 
 

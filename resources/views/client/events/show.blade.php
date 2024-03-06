@@ -3,7 +3,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <img src="{{ $event->image_url }}" class="card-img-top" alt="{{ $event->title }}">
+                    <img src="{{ $event->getFirstMediaUrl('event_pictures') }}" class="card-img-top" alt="{{ $event->title }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ $event->title }}</h5>
                         @if($event->category) {{-- Check if an event has a category --}}

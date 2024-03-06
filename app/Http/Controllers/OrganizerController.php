@@ -11,6 +11,23 @@ use Illuminate\Support\Facades\Auth;
 class OrganizerController extends Controller
 {
 
+    public function updateProfilePicture(Request $request)
+    {
+        $request->validate([
+            'profile_picture' => 'required|image|max:2048', // 2MB Max
+        ]);
+
+        $organizer = auth()->user(); // Assuming the authenticated user is the organizer
+
+        // Remove old profile picture if exists
+        $organizer->clearMediaCollection('profile_pictures');
+
+        // Add new profile picture
+        $organizer->addMediaFromRequest('profile_picture')->toMediaCollection('profile_pictures');
+
+        return back()->with('success', 'Profile picture updated successfully.');
+    }
+
     public function profile()
     {
         $organiser = Auth::user(); // Get the currently authenticated user
@@ -70,13 +87,17 @@ class OrganizerController extends Controller
             'end_date' => 'nullable|date|after_or_equal:event_date', // Allow nullable, but must be after start date if provided
             'location' => 'required|string|max:255',
             'category_id' => 'required|integer|exists:categories,id',
-            'capacity' => 'required|integer|min:1', // Assuming you want at least one attendee
+            'capacity' => 'required|integer|min:1',
+            'event_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $validatedData['organizer_id'] = Auth::id(); // Automatically set organizer_id to the current user
+        $event = new Event($validatedData);
+        $event->organizer_id = Auth::id();
+        $event->save();
 
-        // Now with end_date and capacity included
-        Event::create($validatedData);
+        if ($request->hasFile('event_picture')) {
+            $event->addMediaFromRequest('event_picture')->toMediaCollection('event_pictures');
+        }
 
         return redirect()->route('organizer.profile')->with('success', 'Event created successfully.');
     }
