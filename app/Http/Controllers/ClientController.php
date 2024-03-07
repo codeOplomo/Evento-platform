@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Event;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ClientController extends Controller
 {
@@ -130,6 +132,28 @@ class ClientController extends Controller
         $booking->save();
 
         return back()->with('success', 'Booking cancelled successfully.');
+    }
+
+    public function viewTicket($bookingId)
+    {
+        $booking = Booking::with('event', 'user')->findOrFail($bookingId);
+        if($booking->user_id != Auth::id()) {
+            abort(403);
+        }
+        return view('client.tickets.ticket', compact('booking'));
+    }
+
+
+    public function downloadTicket($bookingId)
+    {
+        $booking = Booking::with('event', 'user')->findOrFail($bookingId);
+
+        // Generate QR Code as SVG
+        $qrCodeSvg = QrCode::size(200)->generate(url('/validate-booking/' . $bookingId));
+
+        $pdf = PDF::loadView('client.tickets.pdf', compact('booking', 'qrCodeSvg'));
+
+        return $pdf->download('ticket.pdf');
     }
 
 

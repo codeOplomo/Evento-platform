@@ -85,6 +85,9 @@ Route::middleware(['auth', 'verified', 'checkrole:client'])->group(function () {
     Route::delete('/client/bookings/{booking}/cancel', [ClientController::class, 'cancelBooking'])->name('client.bookings.cancel');
     Route::get('/client/tickets/{booking}/view', [ClientController::class, 'viewTicket'])->name('client.tickets.view');
 
+    Route::get('/client/events/{event}/download-ticket', [ClientController::class, 'downloadTicket'])->name('client.tickets.download');
+
+
 });
 
 
