@@ -16,7 +16,7 @@
         <!-- Client Information Section -->
         <div class="col-lg-4">
             <div class="card">
-                <div class="card-body text-center">
+                <div class="card-body text-center bg-dark text-white p-4 rounded">
                     <!-- Client Profile Picture -->
                     @if($client->getFirstMediaUrl('profile_pictures'))
                         <img src="{{ $client->getFirstMediaUrl('profile_pictures') }}" alt="Profile Picture" class="img-fluid rounded-circle" style="width: 150px; height: 150px;">
@@ -24,9 +24,9 @@
                         <img src="{{ asset('default-profile.png') }}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="width: 150px; height: 150px;">
                     @endif
                     <h5>{{ $client->name }}</h5>
-                    <p class="text-muted">{{ $client->email }}</p>
+                    <p class="text-white">{{ $client->email }}</p>
                     <!-- Update Profile Picture Button -->
-                    <button class="btn btn-primary mt-3" onclick="document.getElementById('profilePictureUpload').click()">Update Profile Picture</button>
+                    <button class="btn btn-outline-light mt-3" onclick="document.getElementById('profilePictureUpload').click()">Update Profile Picture</button>
 
                     <!-- Hidden Form for Profile Picture Upload -->
                     <form action="{{ route('client.updateProfilePicture') }}" method="POST" enctype="multipart/form-data" style="display: none;">

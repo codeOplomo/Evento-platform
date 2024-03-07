@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\City;
 use App\Models\Event;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -45,9 +46,13 @@ class ClientController extends Controller
     public function listEvents(Request $request)
     {
         $currentDate = now();
-        $searchTerm = $request->query('search'); // Retrieve the search term from query parameters
+        $searchTerm = $request->query('search');
         $startDate = $request->query('start_date');
         $endDate = $request->query('end_date');
+        $selectedCity = $request->query('city_id'); // Capture the selected city ID from query parameters
+
+        // Fetch all cities for the dropdown list
+        $cities = City::orderBy('name')->get();
 
         // Apply date range filter if both start date and end date are provided
         $dateFilter = function ($query) use ($startDate, $endDate) {
@@ -56,11 +61,14 @@ class ClientController extends Controller
             }
         };
 
-        // Fetch upcoming and approved events with optional search term and date range
+        // Fetch upcoming and approved events with optional search term, date range, and city filter
         $upcomingEvents = Event::with('category', 'organizer', 'city')
             ->where('is_approved', true)
             ->when($searchTerm, function ($query, $searchTerm) {
                 return $query->where('title', 'LIKE', '%' . $searchTerm . '%');
+            })
+            ->when($selectedCity, function ($query, $selectedCity) { // Apply city filter
+                return $query->where('city_id', $selectedCity);
             })
             ->where(function ($query) use ($currentDate, $dateFilter) {
                 $query->where('event_date', '>', $currentDate)
@@ -74,11 +82,14 @@ class ClientController extends Controller
             ->withQueryString()
             ->appends(['finishedPage' => $request->input('finishedPage')]);
 
-        // Fetch finished, approved events with optional search term and date range
+        // Similar logic for finishedEvents, including the city filter
         $finishedEvents = Event::with('category', 'organizer', 'city')
             ->where('is_approved', true)
             ->when($searchTerm, function ($query, $searchTerm) {
                 return $query->where('title', 'LIKE', '%' . $searchTerm . '%');
+            })
+            ->when($selectedCity, function ($query, $selectedCity) {
+                return $query->where('city_id', $selectedCity);
             })
             ->where($dateFilter)
             ->where(function ($query) use ($currentDate) {
@@ -93,12 +104,8 @@ class ClientController extends Controller
             ->withQueryString()
             ->appends(['upcomingPage' => $request->input('upcomingPage')]);
 
-        return view('client.events.index', compact('upcomingEvents', 'finishedEvents', 'searchTerm', 'startDate', 'endDate'));
+        return view('client.events.index', compact('upcomingEvents', 'finishedEvents', 'searchTerm', 'startDate', 'endDate', 'cities', 'selectedCity'));
     }
-
-
-
-
 
 
     public function showEvent($eventId)

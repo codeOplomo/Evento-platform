@@ -1,30 +1,42 @@
 <x-app-layout>
     <div class="container">
-        <div class="row justify-content-center mb-4">
-            <div class="col-lg-6">
-                <form action="{{ route('client.events.index') }}" method="GET" class="mb-3">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="search" placeholder="Search by event title" value="{{ request()->search }}">
-                        <button class="btn btn-outline-secondary" type="submit">Search</button>
-                    </div>
-                </form>
+        <div class="bg-dark text-white p-4 rounded mb-4">
+            <div class="row align-items-end">
+                <!-- Search Form -->
+                <div class="col-md-4">
+                    <form action="{{ route('client.events.index') }}" method="GET">
+                        <div class="input-group mb-3 mb-md-0">
+                            <input type="text" class="form-control" name="search" placeholder="Search by event title" value="{{ request()->search }}">
+                            <button class="btn btn-outline-light" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
 
-                <!-- Adjusted Date Range Filter Form -->
-                <form action="{{ route('client.events.index') }}" method="GET" class="form-inline">
-                    <div class="form-row align-items-center">
-                        <div class="col-auto">
-                            <label for="start_date" class="sr-only">Start Date</label>
-                            <input type="date" class="form-control mb-2" id="start_date" name="start_date" placeholder="Start Date" value="{{ request()->start_date }}">
+                <!-- Date Range Filter Form -->
+                <div class="col-md-4">
+                    <form action="{{ route('client.events.index') }}" method="GET" class="form-inline">
+                        <div class="input-group mb-3 mb-md-0">
+                            <input type="date" class="form-control" id="start_date" name="start_date" placeholder="Start Date" value="{{ request()->start_date }}">
+                            <input type="date" class="form-control" id="end_date" name="end_date" placeholder="End Date" value="{{ request()->end_date }}">
+                            <button type="submit" class="btn btn-outline-light">Filter</button>
                         </div>
-                        <div class="col-auto">
-                            <label for="end_date" class="sr-only">End Date</label>
-                            <input type="date" class="form-control mb-2" id="end_date" name="end_date" placeholder="End Date" value="{{ request()->end_date }}">
+                    </form>
+                </div>
+
+                <!-- City Filter Form -->
+                <div class="col-md-4">
+                    <form action="{{ route('client.events.index') }}" method="GET">
+                        <div class="input-group mb-3 mb-md-0">
+                            <select class="form-select" id="city_id" name="city_id">
+                                <option value="">Select a City</option>
+                                @foreach($cities as $city)
+                                    <option value="{{ $city->id }}" {{ $selectedCity == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="btn btn-outline-light">Filter</button>
                         </div>
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-primary mb-2">Filter</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
 
