@@ -29,6 +29,39 @@ class OrganizerController extends Controller
         return back()->with('success', 'Profile picture updated successfully.');
     }
 
+
+    public function stats()
+    {
+        $events = Event::with(['bookings' => function ($query) {
+            $query->where('status', 'confirmed');
+        }])
+            ->where('organizer_id', auth()->id())
+            ->get();
+
+        $statisticsData = [
+            'eventsCreated' => $events->count(),
+            'totalBookings' => $events->flatMap->bookings->count(),
+            'pendingBookings' => Booking::whereHas('event', function ($query) {
+                $query->where('organizer_id', auth()->id());
+            })->where('status', 'pending')->count(),
+            'events' => $events // Add the events themselves to the statistics data
+        ];
+
+        return view('organizer.statistics', compact('statisticsData'));
+    }
+
+    public function eventDetails($eventId)
+    {
+        $event = Event::with('bookings.user')->findOrFail($eventId);
+
+        // Only allow the organizer of the event to view the details
+        if (auth()->id() !== $event->organizer_id) {
+            abort(403);
+        }
+
+        return view('organizer.eventDetails', compact('event'));
+    }
+
     public function profile()
     {
         $organiser = Auth::user(); // Get the currently authenticated organizer

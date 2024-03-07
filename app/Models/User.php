@@ -89,6 +89,9 @@ class User extends Authenticatable implements HasMedia
         return $this->roles->contains('name', 'client');
     }
 
-
+    public function isOrganizer()
+    {
+        return $this->roles->contains('name', 'organiser');
+    }
 
 }

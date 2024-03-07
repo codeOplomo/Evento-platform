@@ -71,7 +71,8 @@ Route::middleware(['auth', 'verified', 'checkrole:organiser'])->group(function (
     Route::put('/organizer/events/{event}', [EventController::class, 'update'])->name('organizer.events.update');
     Route::post('/organizer/bookings/{booking}/confirm', [OrganizerController::class, 'confirmBooking'])->name('organizer.bookings.confirm');
     Route::post('/organizer/bookings/{booking}/cancel', [OrganizerController::class, 'cancelBooking'])->name('organizer.bookings.cancel');
-
+    Route::get('/organizer/statistics', [OrganizerController::class, 'stats'])->name('organizer.statistics');
+    Route::get('/organizer/events/{event}/details', [OrganizerController::class, 'eventDetails'])->name('organizer.events.details');
 });
 
 

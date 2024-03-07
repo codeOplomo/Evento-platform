@@ -17,13 +17,18 @@
                 <!-- Dynamic links for authenticated clients -->
                 @auth
                     @if (auth()->user()->isClient())
-                                <a class="nav-link" href="{{ route('client.profile') }}">My Space</a>
-                                <a class="nav-link" href="{{ route('client.events.index') }}">Events</a>
-                                <a class="nav-link" href="">Institutions</a>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('client.profile') }}">My Space</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('client.events.index') }}">Events</a></li>
+                        <li class="nav-item"><a class="nav-link" href="">Institutions</a></li>
+                    @endif
+
+                    <!-- Dynamic links for authenticated organizers -->
+                    @if (auth()->user()->isOrganizer())
+                            <li class="nav-item"><a class="nav-link" href="{{ route('organizer.profile') }}">My Space</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('organizer.statistics') }}">My Statistics</a></li>
                     @endif
                 @endauth
             </ul>
-
 
             <!-- Settings Dropdown -->
             <ul class="navbar-nav">
