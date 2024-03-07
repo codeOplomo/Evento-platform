@@ -1,10 +1,10 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+<nav class="navbar navbar-expand-lg navbar-light border-bottom">
     <div class="container-fluid">
         <!-- Logo -->
-        <a class="navbar-brand" href="{{ route('dashboard') }}">
-            <!-- Replace x-application-logo with your logo's HTML or an img tag -->
-            <img src="/logo-path" alt="Logo" style="height: 45px;">
+        <a class="navbar-brand custom-logo" href="{{ route('dashboard') }}">
+            EV<span class="logo-accent">E</span>NT<span class="logo-accent">O</span>
         </a>
+
 
         <!-- Toggler for Mobile -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
