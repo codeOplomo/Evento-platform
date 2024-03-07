@@ -82,6 +82,9 @@ Route::middleware(['auth', 'verified', 'checkrole:client'])->group(function () {
     Route::post('/client/update-profile-picture', [ClientController::class, 'updateProfilePicture'])->name('client.updateProfilePicture');
 
     Route::post('/client/events/{event}/book', [ClientController::class, 'createBooking'])->name('client.bookings.book');
+    Route::delete('/client/bookings/{booking}/cancel', [ClientController::class, 'cancelBooking'])->name('client.bookings.cancel');
+    Route::get('/client/tickets/{booking}/view', [ClientController::class, 'viewTicket'])->name('client.tickets.view');
+
 });
 
 

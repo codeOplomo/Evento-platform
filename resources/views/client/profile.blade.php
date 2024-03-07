@@ -50,7 +50,7 @@
                                 <th>Date</th>
                                 <th>Status</th>
                                 <th>Tickets</th>
-                                <!-- Add more headers as needed -->
+                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -60,7 +60,21 @@
                                     <td>{{ $booking->event->event_date->format('Y-m-d') }}</td>
                                     <td>{{ $booking->status }}</td>
                                     <td>{{ $booking->number_of_tickets }}</td>
-                                    <!-- Add more columns as needed -->
+                                    <td>
+                                        <!-- Cancel Booking Button (only for pending bookings) -->
+                                        @if($booking->status == 'pending')
+                                            <form action="{{ route('client.bookings.cancel', $booking->id) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Cancel Booking</button>
+                                            </form>
+                                        @endif
+
+                                        <!-- View Ticket Button (only for confirmed bookings) -->
+                                        @if($booking->status == 'confirmed')
+                                            <a href="{{ route('client.tickets.view', $booking->id) }}" class="btn btn-info btn-sm">View Ticket</a>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                             </tbody>

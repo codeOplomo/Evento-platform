@@ -90,19 +90,46 @@ class ClientController extends Controller
 
     public function createBooking(Request $request, Event $event)
     {
-        // Validation and capacity check remain the same
+        $request->validate([
+            'number_of_tickets' => 'required|integer|min:1',
+        ]);
+
+        // Check event capacity before creating a new booking
+        $totalBookedTickets = $event->bookings()->where('status', 'confirmed')->sum('number_of_tickets');
+        $remainingCapacity = $event->capacity - $totalBookedTickets;
+
+        if ($request->number_of_tickets > $remainingCapacity) {
+            return back()->with('error', 'Unable to book the requested number of tickets due to capacity limits.');
+        }
 
         // Proceed with booking
         $booking = new Booking();
         $booking->user_id = Auth::id();
         $booking->event_id = $event->id;
         $booking->number_of_tickets = $request->number_of_tickets;
-        // Set booking status based on event's is_auto attribute
-        $booking->status = $event->is_auto ? 'confirmed' : 'pending';
+        // Check if automatic booking is enabled and adjust the status accordingly
+        if ($event->is_auto) {
+            $booking->status = 'confirmed';
+        } else {
+            $booking->status = 'pending';
+        }
         $booking->save();
 
-        // Redirect back with a success message
         return redirect()->back()->with('success', 'Booking successfully created.');
+    }
+
+
+    public function cancelBooking($bookingId)
+    {
+        $booking = Booking::where('id', $bookingId)
+            ->where('user_id', Auth::id()) // Ensure the booking belongs to the currently authenticated user
+            ->firstOrFail();
+
+        // Update the booking status to 'cancelled'
+        $booking->status = 'cancelled';
+        $booking->save();
+
+        return back()->with('success', 'Booking cancelled successfully.');
     }
 
 

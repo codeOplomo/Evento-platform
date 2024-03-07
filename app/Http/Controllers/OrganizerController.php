@@ -50,11 +50,21 @@ class OrganizerController extends Controller
     public function confirmBooking(Request $request, $bookingId)
     {
         $booking = Booking::findOrFail($bookingId);
+        $event = $booking->event;
+
+        $totalBookedTickets = $event->bookings()->where('status', 'confirmed')->sum('number_of_tickets');
+        $remainingCapacity = $event->capacity - $totalBookedTickets;
+
+        if ($booking->number_of_tickets > $remainingCapacity) {
+            return back()->with('error', 'Confirming this booking exceeds the event capacity.');
+        }
+
         $booking->status = 'confirmed';
         $booking->save();
 
         return back()->with('success', 'Booking confirmed successfully.');
     }
+
 
     public function cancelBooking(Request $request, $bookingId)
     {
