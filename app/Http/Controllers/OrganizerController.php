@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Category;
+use App\Models\City;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -100,11 +101,9 @@ class OrganizerController extends Controller
      */
     public function create()
     {
-        // Assuming you might want to select categories for an event
         $categories = Category::all();
-
-        // Return the view with necessary data
-        return view('organizer.events.create', compact('categories'));
+        $cities = City::all(); // Fetch all cities
+        return view('organizer.events.create', compact('categories', 'cities'));
     }
 
 
@@ -119,6 +118,7 @@ class OrganizerController extends Controller
             'event_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:event_date',
             'location' => 'required|string|max:255',
+            'city_id' => 'required|integer|exists:cities,id',
             'category_id' => 'required|integer|exists:categories,id',
             'capacity' => 'required|integer|min:1',
             'event_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -129,7 +129,7 @@ class OrganizerController extends Controller
 
         $event = new Event($validatedData);
         $event->organizer_id = Auth::id();
-        // Set the is_auto attribute based on the checkbox
+        $event->city_id = $request->city_id;
         $event->is_auto = $is_auto;
         $event->save();
 
@@ -155,11 +155,10 @@ class OrganizerController extends Controller
     public function edit($id)
     {
         $event = Event::findOrFail($id);
-        $categories = Category::all(); // Assuming you use categories
-
-        return view('organizer.events.edit', compact('event', 'categories'));
+        $cities = City::all(); // Assuming you have a City model
+        $categories = Category::all(); // Assuming you already have this
+        return view('organizer.events.edit', compact('event', 'categories', 'cities'));
     }
-
 
 
     /**

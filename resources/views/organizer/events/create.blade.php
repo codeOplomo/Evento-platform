@@ -19,6 +19,17 @@
                 <label for="end_date" class="form-label">End Date</label>
                 <input type="date" class="form-control" id="end_date" name="end_date">
             </div>
+
+            <div class="mb-3">
+                <label for="city_id" class="form-label">City</label>
+                <select class="form-select" id="city_id" name="city_id" required>
+                    <option value="">Select a City</option>
+                    @foreach($cities as $city)
+                        <option value="{{ $city->id }}">{{ $city->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <div class="mb-3">
                 <label for="location" class="form-label">Location</label>
                 <input type="text" class="form-control" id="location" name="location" required>
@@ -36,6 +47,7 @@
                 <label for="capacity" class="form-label">Capacity</label>
                 <input type="number" class="form-control" id="capacity" name="capacity" required>
             </div>
+
             <div class="mb-3">
                 <label for="event_picture" class="form-label">Event Picture</label>
                 <input type="file" class="form-control" id="event_picture" name="event_picture">

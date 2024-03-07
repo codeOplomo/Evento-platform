@@ -11,9 +11,8 @@ class Event extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
-    // Définir les attributs qui peuvent être assignés en masse
     protected $fillable = [
-        'title', 'description', 'event_date', 'end_date', 'location', 'capacity', 'is_approved', 'is_auto', 'category_id', 'organizer_id',
+        'title', 'description', 'event_date', 'end_date', 'location', 'city_id', 'capacity', 'is_approved', 'is_auto', 'category_id', 'organizer_id',
     ];
 
 
@@ -42,10 +41,14 @@ class Event extends Model implements HasMedia
         return $this->belongsTo(Category::class);
     }
 
-    // In Event.php model
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);
     }
 
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
 }

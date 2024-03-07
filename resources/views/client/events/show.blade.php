@@ -10,6 +10,9 @@
                         <span class="badge" style="background-color: {{ '#' . substr(md5($event->category->name), 0, 6) }}">{{ $event->category->name }}</span>
                         @endif
                         <p class="card-text">{{ $event->description }}</p>
+                        @if($event->city) {{-- Ensure there's a city associated with the event --}}
+                        <p class="card-text"><strong>City:</strong> {{ $event->city->name }}</p>
+                        @endif
                         <p class="card-text"><small class="text-muted">Date: {{ $event->event_date->format('F d, Y') }}</small></p>
                         @if($event->end_date)
                             <p class="card-text"><small class="text-muted">End Date: {{ $event->end_date->format('F d, Y') }}</small></p>

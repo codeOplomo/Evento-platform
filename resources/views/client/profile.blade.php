@@ -48,6 +48,7 @@
                             <tr>
                                 <th>Event Title</th>
                                 <th>Date</th>
+                                <th>City</th>
                                 <th>Status</th>
                                 <th>Tickets</th>
                                 <th>Actions</th>
@@ -58,6 +59,7 @@
                                 <tr>
                                     <td>{{ $booking->event->title }}</td>
                                     <td>{{ $booking->event->event_date->format('Y-m-d') }}</td>
+                                    <td>{{ $booking->event->city->name ?? 'N/A' }}</td>
                                     <td>{{ $booking->status }}</td>
                                     <td>{{ $booking->number_of_tickets }}</td>
                                     <td>

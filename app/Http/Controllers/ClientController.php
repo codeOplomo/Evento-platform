@@ -42,27 +42,45 @@ class ClientController extends Controller
         return view('client.profile', compact('client', 'bookings'));
     }
 
-    public function listEvents()
+    public function listEvents(Request $request)
     {
         $currentDate = now();
+        $searchTerm = $request->query('search'); // Retrieve the search term from query parameters
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
 
-        // Fetch upcoming and approved events
-        $upcomingEvents = Event::with('category', 'organizer')
+        // Apply date range filter if both start date and end date are provided
+        $dateFilter = function ($query) use ($startDate, $endDate) {
+            if ($startDate && $endDate) {
+                $query->whereBetween('event_date', [$startDate, $endDate]);
+            }
+        };
+
+        // Fetch upcoming and approved events with optional search term and date range
+        $upcomingEvents = Event::with('category', 'organizer', 'city')
             ->where('is_approved', true)
-            ->where(function ($query) use ($currentDate) {
+            ->when($searchTerm, function ($query, $searchTerm) {
+                return $query->where('title', 'LIKE', '%' . $searchTerm . '%');
+            })
+            ->where(function ($query) use ($currentDate, $dateFilter) {
                 $query->where('event_date', '>', $currentDate)
                     ->orWhere(function ($subQuery) use ($currentDate) {
                         $subQuery->where('end_date', '>', $currentDate)
                             ->orWhereNull('end_date');
                     });
             })
+            ->where($dateFilter)
             ->paginate(6)
             ->withQueryString()
-            ->appends(['finishedPage' => request()->input('finishedPage')]);
+            ->appends(['finishedPage' => $request->input('finishedPage')]);
 
-        // Fetch finished, approved events
-        $finishedEvents = Event::with('category', 'organizer')
+        // Fetch finished, approved events with optional search term and date range
+        $finishedEvents = Event::with('category', 'organizer', 'city')
             ->where('is_approved', true)
+            ->when($searchTerm, function ($query, $searchTerm) {
+                return $query->where('title', 'LIKE', '%' . $searchTerm . '%');
+            })
+            ->where($dateFilter)
             ->where(function ($query) use ($currentDate) {
                 $query->whereNotNull('end_date')
                     ->where('end_date', '<=', $currentDate);
@@ -73,10 +91,12 @@ class ClientController extends Controller
             })
             ->paginate(6)
             ->withQueryString()
-            ->appends(['upcomingPage' => request()->input('upcomingPage')]);
+            ->appends(['upcomingPage' => $request->input('upcomingPage')]);
 
-        return view('client.events.index', compact('upcomingEvents', 'finishedEvents'));
+        return view('client.events.index', compact('upcomingEvents', 'finishedEvents', 'searchTerm', 'startDate', 'endDate'));
     }
+
+
 
 
 

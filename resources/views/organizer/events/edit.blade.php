@@ -26,6 +26,16 @@
             </div>
 
             <div class="mb-3">
+                <label for="city_id" class="form-label">City</label>
+                <select class="form-select" id="city_id" name="city_id" required>
+                    <option value="">Select a City</option>
+                    @foreach($cities as $city)
+                        <option value="{{ $city->id }}" {{ $event->city_id == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-3">
                 <label for="location" class="form-label">Location</label>
                 <input type="text" class="form-control" id="location" name="location" value="{{ old('location', $event->location) }}" required>
             </div>
