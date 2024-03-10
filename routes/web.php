@@ -60,7 +60,7 @@ Route::middleware(['auth', 'verified', 'checkrole:admin'])->group(function () {
     Route::patch('/dashboard/admin/users/{user}/unban', [UserController::class, 'unban'])->name('admin.users.unban');
 });
 
-Route::middleware(['auth', 'verified', 'checkrole:organiser'])->group(function () {
+Route::middleware(['auth', 'check-banned', 'verified', 'checkrole:organiser'])->group(function () {
     Route::resource('organizer/events', OrganizerController::class)->except(['show']);
     Route::get('/organizer-profile', [OrganizerController::class, 'profile'])->name('organizer.profile');
     Route::get('organizer/events/create', [OrganizerController::class, 'create'])->name('organizer.events.create');
@@ -76,7 +76,7 @@ Route::middleware(['auth', 'verified', 'checkrole:organiser'])->group(function (
 });
 
 
-Route::middleware(['auth', 'verified', 'checkrole:client'])->group(function () {
+Route::middleware(['auth', 'check-banned', 'verified', 'checkrole:client'])->group(function () {
     Route::get('/client-profile', [ClientController::class, 'profile'])->name('client.profile');
     Route::get('/client/events', [ClientController::class, 'listEvents'])->name('client.events.index');
     Route::get('/client/events/{event}', [ClientController::class, 'showEvent'])->name('client.events.show');
