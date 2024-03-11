@@ -21,7 +21,7 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                // Determine redirection based on the authenticated user's role
+                
                 $role_id = Auth::guard($guard)->user()->role_id;
                 if ($role_id == 1) {
                     return redirect('/admin-dashboard');

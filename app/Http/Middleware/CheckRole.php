@@ -23,13 +23,13 @@ class CheckRole
         $userRoles = Auth::user()->roles->pluck('name')->toArray();
 
         foreach ($roles as $role) {
-            // Check if any of the user's roles match the required roles
+            
             if (in_array($role, $userRoles)) {
                 return $next($request);
             }
         }
 
-        // If user does not have any of the required roles, redirect to home
+        
         return redirect('/');
     }
 }

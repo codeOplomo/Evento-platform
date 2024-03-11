@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
 
-    // Method to ban a user
     public function ban($id)
     {
         $user = User::findOrFail($id);
@@ -18,7 +17,6 @@ class UserController extends Controller
         return back()->with('success', 'User banned successfully.');
     }
 
-// Method to unban a user
     public function unban($id)
     {
         $user = User::findOrFail($id);
@@ -71,7 +69,7 @@ class UserController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        // Attach role to user
+        
         $role = Role::where('name', $request->role)->first();
         $user->roles()->attach($role);
 
@@ -93,7 +91,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        // Assuming you have a role list to choose from in your view
+        
         $roles = Role::all();
         return view('admin.users.edit', compact('user', 'roles'));
     }
@@ -113,22 +111,16 @@ class UserController extends Controller
             'role' => 'required|exists:roles,id',
         ]);
 
-        // Find the user by ID
         $user = User::findOrFail($id);
 
-        // Update user details
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
         ]);
 
-        // Sync roles (detach any existing roles and attach the new one)
-        // This assumes that a user can have multiple roles.
-        // If a user can only have a single role, you might instead use `syncWithoutDetaching`
-        // to ensure the user does not get assigned the same role more than once.
+        
         $user->roles()->sync([$request->role]);
 
-        // Redirect back with a success message
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 

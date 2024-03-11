@@ -19,7 +19,7 @@ class TicketController extends Controller
 
     public function create()
     {
-        $bookings = Booking::all(); // Assuming you want to select from existing bookings
+        $bookings = Booking::all(); 
         return view('admin.tickets.create', compact('bookings'));
     }
 

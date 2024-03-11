@@ -10,7 +10,6 @@ class EventController extends Controller
 {
     public function approve(Event $event)
     {
-        // Update the event's is_approved field to true
         $event->update(['is_approved' => true]);
 
         return redirect()->back()->with('success', 'Event has been approved successfully.');
@@ -18,10 +17,6 @@ class EventController extends Controller
 
     public function reject(Event $event)
     {
-        // You can perform any additional logic here if needed before rejecting the event
-        // For example, sending notifications to the event organizer or attendees
-
-        // Update the motif column of the event
         $event->motif = request()->input('motif');
         $event->save();
 
@@ -46,7 +41,7 @@ class EventController extends Controller
 
     public function create()
     {
-        $categories = Category::all(); // Fetch all categories from the database
+        $categories = Category::all(); 
         return view('admin.events.create', compact('categories'));
     }
 
@@ -58,7 +53,6 @@ class EventController extends Controller
             'event_date' => 'required|date',
             'location' => 'required|string|max:255',
             'category_id' => 'required|integer|exists:categories,id',
-            // Assuming you handle setting the organizer_id automatically or through request
             'organizer_id' => 'required|integer|exists:users,id',
         ]);
 
@@ -75,8 +69,7 @@ class EventController extends Controller
 
     public function edit(Event $event)
     {
-        $categories = Category::all(); // Fetch all categories
-        // Make sure the $event is passed to the view as well, for pre-filling the form
+        $categories = Category::all(); 
         return view('admin.events.edit', compact('event', 'categories'));
     }
 
@@ -84,7 +77,6 @@ class EventController extends Controller
     public function update(Request $request, Event $event)
     {
         $validatedData = $request->validate([
-            // Validation rules
         ]);
 
         $event->update($validatedData);

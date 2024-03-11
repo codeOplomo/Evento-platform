@@ -15,15 +15,14 @@ class OrganizerController extends Controller
     public function updateProfilePicture(Request $request)
     {
         $request->validate([
-            'profile_picture' => 'required|image|max:2048', // 2MB Max
+            'profile_picture' => 'required|image|max:2048', 
         ]);
 
-        $organizer = auth()->user(); // Assuming the authenticated user is the organizer
+        $organizer = auth()->user(); 
 
-        // Remove old profile picture if exists
+        
         $organizer->clearMediaCollection('profile_pictures');
 
-        // Add new profile picture
         $organizer->addMediaFromRequest('profile_picture')->toMediaCollection('profile_pictures');
 
         return back()->with('success', 'Profile picture updated successfully.');
@@ -44,7 +43,7 @@ class OrganizerController extends Controller
             'pendingBookings' => Booking::whereHas('event', function ($query) {
                 $query->where('organizer_id', auth()->id());
             })->where('status', 'pending')->count(),
-            'events' => $events // Add the events themselves to the statistics data
+            'events' => $events 
         ];
 
         return view('organizer.statistics', compact('statisticsData'));
@@ -54,7 +53,6 @@ class OrganizerController extends Controller
     {
         $event = Event::with('bookings.user')->findOrFail($eventId);
 
-        // Only allow the organizer of the event to view the details
         if (auth()->id() !== $event->organizer_id) {
             abort(403);
         }
@@ -64,9 +62,9 @@ class OrganizerController extends Controller
 
     public function profile()
     {
-        $organiser = Auth::user(); // Get the currently authenticated organizer
+        $organiser = Auth::user(); 
 
-        // Fetch only pending bookings for the organizer's events
+        
         $bookings = Booking::with('event', 'user')
             ->whereHas('event', function($query) use ($organiser) {
                 $query->where('organizer_id', $organiser->id);
@@ -74,7 +72,6 @@ class OrganizerController extends Controller
             ->where('status', 'pending')
             ->get();
 
-        // Assuming you already have a way to fetch events for the organizer
         $events = $organiser->events;
 
         return view('organizer.profile', compact('organiser', 'bookings', 'events'));
@@ -135,7 +132,7 @@ class OrganizerController extends Controller
     public function create()
     {
         $categories = Category::all();
-        $cities = City::all(); // Fetch all cities
+        $cities = City::all();
         return view('organizer.events.create', compact('categories', 'cities'));
     }
 
@@ -157,7 +154,7 @@ class OrganizerController extends Controller
             'event_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // If the checkbox is unchecked, 'is_auto' won't be present, so set it to true by default
+        
         $is_auto = $request->has('is_auto') ? false : true;
 
         $event = new Event($validatedData);
@@ -188,8 +185,8 @@ class OrganizerController extends Controller
     public function edit($id)
     {
         $event = Event::findOrFail($id);
-        $cities = City::all(); // Assuming you have a City model
-        $categories = Category::all(); // Assuming you already have this
+        $cities = City::all(); 
+        $categories = Category::all(); 
         return view('organizer.events.edit', compact('event', 'categories', 'cities'));
     }
 
@@ -199,18 +196,16 @@ class OrganizerController extends Controller
      */
     public function update(Request $request, Event $event)
     {
-        // Validate the request data
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'event_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:event_date',
             'location' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id', // Assuming the category_id is submitted in the form
-            'capacity' => 'required|integer|min:1', // Assuming the capacity is submitted in the form
+            'category_id' => 'required|exists:categories,id', 
+            'capacity' => 'required|integer|min:1', 
         ]);
 
-        // Update the event details
         $event->update([
             'title' => $request->title,
             'description' => $request->description,
@@ -221,7 +216,7 @@ class OrganizerController extends Controller
             'capacity' => $request->capacity,
         ]);
 
-        // Redirect back with success message
+        
         return redirect()->route('organizer.events.index')->with('success', 'Event updated successfully.');
     }
 
@@ -231,7 +226,7 @@ class OrganizerController extends Controller
     public function destroy($id)
     {
         $event = Event::findOrFail($id);
-        // Perform any authorization checks here to ensure the user can delete this event
+        
         $event->delete();
         return redirect()->route('organizer.profile')->with('success', 'Event deleted successfully.');
     }

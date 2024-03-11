@@ -19,10 +19,9 @@ class CheckIfBanned
     public function handle(Request $request, Closure $next)
     {
         if (Auth::check() && Auth::user()->is_banned) {
-            // Log the user out.
+            
             Auth::logout();
 
-            // Redirect them to a specific route or back with an error message.
             return redirect()->route('login')->with('error', 'Your account has been suspended. Please contact support.');
         }
 

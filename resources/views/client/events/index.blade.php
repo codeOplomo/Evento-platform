@@ -40,12 +40,12 @@
             </div>
         </div>
 
-        <h2>Upcoming Events</h2>
+        <h2 class="text-light">Upcoming Events</h2>
         <div class="row">
             @foreach ($upcomingEvents as $event)
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
-                        <img src="{{ $event->getFirstMediaUrl('event_pictures') }}" class="card-img-top" alt="Event Image">
+                        <img src="{{ $event->getFirstMediaUrl('event_pictures') }}" class="card-img-top" alt="Event Image" style="width:350; height:200; fit-content:cover">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">{{ $event->title }}</h5>
                             <span class="badge bg-primary mb-2">{{ $event->city->name ?? 'No City' }}</span>
@@ -104,12 +104,12 @@
         </div>
         {{ $upcomingEvents->links() }}
 
-        <h2>Finished Events</h2>
+        <h2 class="text-light">Finished Events</h2>
         <div class="row">
             @foreach ($finishedEvents as $event)
                 <div class="col-md-4 mb-4">
                     <div class="card h-100">
-                        <img src="{{ $event->getFirstMediaUrl('event_pictures') }}" class="card-img-top" alt="Event Image">
+                        <img src="{{ $event->getFirstMediaUrl('event_pictures') }}" class="card-img-top" alt="Event Image" style="width:350; height:200; fit-content:cover">
                         <div class="card-body">
                             <h5 class="card-title">{{ $event->title }}</h5>
                             <span class="badge bg-primary mb-2">{{ $event->city->name ?? 'No City' }}</span>

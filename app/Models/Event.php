@@ -23,7 +23,7 @@ class Event extends Model implements HasMedia
         'is_auto' => 'boolean',
     ];
 
-    // Relation avec l'organisateur (un utilisateur)
+    
     public function organizer()
     {
         return $this->belongsTo(User::class, 'organizer_id');

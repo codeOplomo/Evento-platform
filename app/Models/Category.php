@@ -26,7 +26,6 @@ class Category extends Model
     {
         parent::boot();
 
-        // Generate slug before saving the category
         static::saving(function ($category) {
             $slug = Str::slug($category->name);
             $count = static::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();

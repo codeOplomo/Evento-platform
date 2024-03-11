@@ -17,15 +17,14 @@ class ClientController extends Controller
     public function updateProfilePicture(Request $request)
     {
         $request->validate([
-            'profile_picture' => 'required|image|max:2048', // 2MB Max
+            'profile_picture' => 'required|image|max:2048', 
         ]);
 
-        $client = auth()->user(); // Assuming the authenticated user is the organizer
+        $client = auth()->user(); 
 
-        // Remove old profile picture if exists
         $client->clearMediaCollection('profile_pictures');
 
-        // Add new profile picture
+        
         $client->addMediaFromRequest('profile_picture')->toMediaCollection('profile_pictures');
 
         return back()->with('success', 'Profile picture updated successfully.');
@@ -33,85 +32,88 @@ class ClientController extends Controller
 
     public function profile()
     {
-        // Retrieve the authenticated client
         $client = Auth::user();
 
-        // Retrieve the bookings for the authenticated client
-        // Make sure you have the relationship defined in your User model
         $bookings = $client->bookings()->with('event')->get();
 
         return view('client.profile', compact('client', 'bookings'));
     }
 
     public function listEvents(Request $request)
-    {
-        $currentDate = now();
-        $searchTerm = $request->query('search');
-        $startDate = $request->query('start_date');
-        $endDate = $request->query('end_date');
-        $selectedCity = $request->query('city_id'); // Capture the selected city ID from query parameters
+{
+    $currentDate = now();
+    $searchTerm = $request->query('search');
+    $startDate = $request->query('start_date');
+    $endDate = $request->query('end_date');
+    $selectedCity = $request->query('city_id'); 
 
-        // Fetch all cities for the dropdown list
-        $cities = City::orderBy('name')->get();
+    
+    $cities = City::orderBy('name')->get();
 
-        // Apply date range filter if both start date and end date are provided
-        $dateFilter = function ($query) use ($startDate, $endDate) {
-            if ($startDate && $endDate) {
-                $query->whereBetween('event_date', [$startDate, $endDate]);
-            }
-        };
+    
+    $dateFilter = function ($query) use ($startDate, $endDate) {
+        if ($startDate && $endDate) {
+            $query->whereBetween('event_date', [$startDate, $endDate]);
+        }
+    };
 
-        // Fetch upcoming and approved events with optional search term, date range, and city filter
-        $upcomingEvents = Event::with('category', 'organizer', 'city')
-            ->where('is_approved', true)
-            ->when($searchTerm, function ($query, $searchTerm) {
-                return $query->where('title', 'LIKE', '%' . $searchTerm . '%');
-            })
-            ->when($selectedCity, function ($query, $selectedCity) { // Apply city filter
-                return $query->where('city_id', $selectedCity);
-            })
-            ->where(function ($query) use ($currentDate, $dateFilter) {
-                $query->where('event_date', '>', $currentDate)
-                    ->orWhere(function ($subQuery) use ($currentDate) {
-                        $subQuery->where('end_date', '>', $currentDate)
-                            ->orWhereNull('end_date');
-                    });
-            })
-            ->where($dateFilter)
-            ->paginate(6)
-            ->withQueryString()
-            ->appends(['finishedPage' => $request->input('finishedPage')]);
+    
+    $upcomingEvents = Event::with('category', 'organizer', 'city')
+        ->whereHas('organizer', function ($query) {
+            $query->where('is_banned', false); 
+        })
+        ->where('is_approved', true)
+        ->when($searchTerm, function ($query, $searchTerm) {
+            return $query->where('title', 'LIKE', '%' . $searchTerm . '%');
+        })
+        ->when($selectedCity, function ($query, $selectedCity) { 
+            return $query->where('city_id', $selectedCity);
+        })
+        ->where(function ($query) use ($currentDate, $dateFilter) {
+            $query->where('event_date', '>', $currentDate)
+                ->orWhere(function ($subQuery) use ($currentDate) {
+                    $subQuery->where('end_date', '>', $currentDate)
+                        ->orWhereNull('end_date');
+                });
+        })
+        ->where($dateFilter)
+        ->paginate(6)
+        ->withQueryString()
+        ->appends(['finishedPage' => $request->input('finishedPage')]);
 
-        // Similar logic for finishedEvents, including the city filter
-        $finishedEvents = Event::with('category', 'organizer', 'city')
-            ->where('is_approved', true)
-            ->when($searchTerm, function ($query, $searchTerm) {
-                return $query->where('title', 'LIKE', '%' . $searchTerm . '%');
-            })
-            ->when($selectedCity, function ($query, $selectedCity) {
-                return $query->where('city_id', $selectedCity);
-            })
-            ->where($dateFilter)
-            ->where(function ($query) use ($currentDate) {
-                $query->whereNotNull('end_date')
-                    ->where('end_date', '<=', $currentDate);
-            })
-            ->orWhere(function ($query) use ($currentDate) {
-                $query->whereNull('end_date')
-                    ->where('event_date', '<=', $currentDate);
-            })
-            ->paginate(6)
-            ->withQueryString()
-            ->appends(['upcomingPage' => $request->input('upcomingPage')]);
+        
+    $finishedEvents = Event::with('category', 'organizer', 'city')
+        ->whereHas('organizer', function ($query) {
+            $query->where('is_banned', false); 
+        })
+        ->where('is_approved', true)
+        ->when($searchTerm, function ($query, $searchTerm) {
+            return $query->where('title', 'LIKE', '%' . $searchTerm . '%');
+        })
+        ->when($selectedCity, function ($query, $selectedCity) {
+            return $query->where('city_id', $selectedCity);
+        })
+        ->where($dateFilter)
+        ->where(function ($query) use ($currentDate) {
+            $query->whereNotNull('end_date')
+                ->where('end_date', '<=', $currentDate);
+        })
+        ->orWhere(function ($query) use ($currentDate) {
+            $query->whereNull('end_date')
+                ->where('event_date', '<=', $currentDate);
+        })
+        ->paginate(6)
+        ->withQueryString()
+        ->appends(['upcomingPage' => $request->input('upcomingPage')]);
 
-        return view('client.events.index', compact('upcomingEvents', 'finishedEvents', 'searchTerm', 'startDate', 'endDate', 'cities', 'selectedCity'));
-    }
+    return view('client.events.index', compact('upcomingEvents', 'finishedEvents', 'searchTerm', 'startDate', 'endDate', 'cities', 'selectedCity'));
+}
+
 
 
     public function showEvent($eventId)
     {
         $event = Event::with('category', 'organizer')->findOrFail($eventId);
-        // You might also want to load any other related data needed for the view
 
         return view('client.events.show', compact('event'));
     }
@@ -123,7 +125,7 @@ class ClientController extends Controller
             'number_of_tickets' => 'required|integer|min:1',
         ]);
 
-        // Check event capacity before creating a new booking
+        
         $totalBookedTickets = $event->bookings()->where('status', 'confirmed')->sum('number_of_tickets');
         $remainingCapacity = $event->capacity - $totalBookedTickets;
 
@@ -131,12 +133,12 @@ class ClientController extends Controller
             return back()->with('error', 'Unable to book the requested number of tickets due to capacity limits.');
         }
 
-        // Proceed with booking
+        
         $booking = new Booking();
         $booking->user_id = Auth::id();
         $booking->event_id = $event->id;
         $booking->number_of_tickets = $request->number_of_tickets;
-        // Check if automatic booking is enabled and adjust the status accordingly
+        
         if ($event->is_auto) {
             $booking->status = 'confirmed';
         } else {
@@ -151,10 +153,10 @@ class ClientController extends Controller
     public function cancelBooking($bookingId)
     {
         $booking = Booking::where('id', $bookingId)
-            ->where('user_id', Auth::id()) // Ensure the booking belongs to the currently authenticated user
+            ->where('user_id', Auth::id()) 
             ->firstOrFail();
 
-        // Update the booking status to 'cancelled'
+            
         $booking->status = 'cancelled';
         $booking->save();
 
@@ -175,7 +177,7 @@ class ClientController extends Controller
     {
         $booking = Booking::with('event', 'user')->findOrFail($bookingId);
 
-        // Generate QR Code as SVG
+        
         $qrCodeSvg = QrCode::size(200)->generate(url('/validate-booking/' . $bookingId));
 
         $pdf = PDF::loadView('client.tickets.pdf', compact('booking', 'qrCodeSvg'));

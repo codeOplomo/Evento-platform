@@ -12,7 +12,6 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        // Paginate the categories. Adjust the '10' to however many items you want per page.
         $categories = Category::paginate(10);
 
         return view('admin.categories.index', compact('categories'));

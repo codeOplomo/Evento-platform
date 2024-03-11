@@ -69,7 +69,7 @@ class User extends Authenticatable implements HasMedia
      */
     public function events()
     {
-        return $this->hasMany(Event::class, 'organizer_id'); // Assurez-vous que 'organizer_id' est le nom de la clé étrangère dans la table des événements
+        return $this->hasMany(Event::class, 'organizer_id');
     }
 
     public function bookedEvents()
@@ -77,7 +77,6 @@ class User extends Authenticatable implements HasMedia
         return $this->belongsToMany(Event::class, 'bookings');
     }
 
-    // In User.php model
     public function bookings()
     {
         return $this->hasMany(Booking::class);

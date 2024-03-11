@@ -19,7 +19,6 @@ class Ticket extends Model
         return $this->belongsTo(Booking::class);
     }
 
-    // Vous pouvez ajouter ici des méthodes supplémentaires utiles pour votre modèle Ticket
 }
 
 
